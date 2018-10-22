@@ -117,4 +117,30 @@ object List { // `List` companion object. Contains functions for creating and wo
   def filter[A](l: List[A])(f: A => Boolean): List[A] =
     foldRight1(l, Nil: List[A])((h, t) => if (f(h)) Cons(h, t) else t)
 
+  def flatMap[A, B](as: List[A])(f: A => List[B]): List[B] =
+    concat(map(as)(f))
+
+  def filter1[A](l: List[A])(f: A => Boolean): List[A] =
+    flatMap(l)(x => if (f(x)) List(x) else Nil)
+
+  def addPairs(l: List[Int], r: List[Int]): List[Int] = l match {
+    case Nil => l
+    case Cons(lh, lt) => r match {
+      case Nil => r
+      case Cons(rh, rt) => Cons(lh + rh, addPairs(lt, rt))
+    }
+  }
+
+  def addPairs1(l: List[Int], r: List[Int]): List[Int] = (l, r) match {
+    case (Nil, _) => Nil
+    case (_, Nil) => Nil
+    case (Cons(lh, lt), Cons(rh, rt)) => Cons(lh + rh, addPairs1(lt, rt))
+  }
+
+  def zipWith[A, B](l: List[A], r: List[A])(f: (A, A) => B): List[B] = (l, r) match {
+    case (Nil, _) => Nil
+    case (_, Nil) => Nil
+    case (Cons(lh, lt), Cons(rh, rt)) => Cons(f(lh, rh), zipWith(lt, rt)(f))
+  }
+
 }

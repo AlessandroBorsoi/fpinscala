@@ -130,4 +130,39 @@ class ListTest extends FunSuite {
     assert(filter(List(1, 2, 3, 4))(_ % 2 == 0) == List(2, 4))
   }
 
+  test("testFlatMap") {
+    assert(flatMap(Nil: List[Int])((i: Int) => List(i + 1)) == Nil)
+    assert(flatMap(List(1, 2, 3))(i => List(i, i)) == List(1, 1, 2, 2, 3, 3))
+  }
+
+  test("testFilter1") {
+    assert(filter1(Nil: List[Int])(_ % 2 == 0) == Nil)
+    assert(filter1(List(1))(_ % 2 == 0) == Nil)
+    assert(filter1(List(1, 2))(_ % 2 == 0) == List(2))
+    assert(filter1(List(1, 2, 3, 4))(_ % 2 == 0) == List(2, 4))
+  }
+
+  test("testAddPairs") {
+    assert(addPairs(Nil, Nil) == Nil)
+    assert(addPairs(List(1), Nil) == Nil)
+    assert(addPairs(Nil, List(1)) == Nil)
+    assert(addPairs(List(1), List(2)) == List(3))
+    assert(addPairs(List(1, 2, 3), List(4, 5, 6)) == List(5, 7, 9))
+  }
+
+  test("testAddPairs1") {
+    assert(addPairs1(Nil, Nil) == Nil)
+    assert(addPairs1(List(1), Nil) == Nil)
+    assert(addPairs1(Nil, List(1)) == Nil)
+    assert(addPairs1(List(1), List(2)) == List(3))
+    assert(addPairs1(List(1, 2, 3), List(4, 5, 6)) == List(5, 7, 9))
+  }
+
+  test("testZipWith") {
+    assert(zipWith(Nil: List[Int], Nil: List[Int])((a, b) => a + b) == Nil)
+    assert(zipWith(List(1), Nil: List[Int])((a, b) => a + b) == Nil)
+    assert(zipWith(Nil: List[Int], List(1))((a, b) => a + b) == Nil)
+    assert(zipWith(List(1, 2, 3), List(4, 5, 6))(_ + _) == List(5, 7, 9))
+    assert(zipWith(List("1", "2", "3"), List("4", "5", "6"))(_ + _) == List("14", "25", "36"))
+  }
 }
