@@ -82,4 +82,52 @@ class ListTest extends FunSuite {
     assert(reverse(List(1, 2, 3, 4, 5)) == List(5, 4, 3, 2, 1))
   }
 
+  test("testAppen1") {
+    assert(append1(Nil, Nil) == Nil)
+    assert(append1(List(1, 2, 3), Nil) == List(1, 2, 3))
+    assert(append1(Nil, List(1, 2, 3)) == List(1, 2, 3))
+    assert(append1(List(1, 2, 3), List(4, 5, 6)) == List(1, 2, 3, 4, 5, 6))
+  }
+
+  test("testConcat") {
+    assert(concat(Nil) == Nil)
+    assert(concat(List(Nil)) == Nil)
+    assert(concat(List(List(1))) == List(1))
+    assert(concat(List(List(1), List(2, 3), List(4), List(5, 6))) == List(1, 2, 3, 4, 5, 6))
+  }
+
+  test("testIncr") {
+    assert(incr(Nil) == Nil)
+    assert(incr(List(1)) == List(2))
+    assert(incr(List(1, 2, 3, 4, 5)) == List(2, 3, 4, 5, 6))
+  }
+
+  test("testIncr1") {
+    assert(incr1(Nil) == Nil)
+    assert(incr1(List(1)) == List(2))
+    assert(incr1(List(1, 2, 3, 4, 5)) == List(2, 3, 4, 5, 6))
+  }
+
+  test("testDoubleToString") {
+    assert(doubleToString(Nil) == Nil)
+    assert(doubleToString(List(1.0)) == List("1.0"))
+    assert(doubleToString(List(1.0, 2.0, 3.0, 4.0)) == List("1.0", "2.0", "3.0", "4.0"))
+  }
+
+  test("testMap") {
+    assert(map(Nil: List[Int])(_ + 1) == Nil)
+    assert(map(List(1))(_ + 1) == List(2))
+    assert(map(List(1, 2, 3))(_ + 1) == List(2, 3, 4))
+    assert(map(Nil: List[Double])(_.toString) == Nil)
+    assert(map(List(1.0))(_.toString) == List("1.0"))
+    assert(map(List(1.0, 2.0, 3.0))(_.toString) == List("1.0", "2.0", "3.0"))
+  }
+
+  test("testFilter") {
+    assert(filter(Nil: List[Int])(_ % 2 == 0) == Nil)
+    assert(filter(List(1))(_ % 2 == 0) == Nil)
+    assert(filter(List(1, 2))(_ % 2 == 0) == List(2))
+    assert(filter(List(1, 2, 3, 4))(_ % 2 == 0) == List(2, 4))
+  }
+
 }

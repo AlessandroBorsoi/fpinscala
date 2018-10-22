@@ -30,11 +30,10 @@ object List { // `List` companion object. Contains functions for creating and wo
     case _ => 101
   }
 
-  def append[A](a1: List[A], a2: List[A]): List[A] =
-    a1 match {
-      case Nil => a2
-      case Cons(h, t) => Cons(h, append(t, a2))
-    }
+  def append[A](a1: List[A], a2: List[A]): List[A] = a1 match {
+    case Nil => a2
+    case Cons(h, t) => Cons(h, append(t, a2))
+  }
 
   def foldRight[A, B](as: List[A], z: B)(f: (A, B) => B): B = // Utility functions
     as match {
@@ -89,5 +88,33 @@ object List { // `List` companion object. Contains functions for creating and wo
   def reverse[A](l: List[A]): List[A] =
     foldLeft(l, Nil: List[A])((acc, h) => Cons(h, acc))
 
-  def map[A, B](l: List[A])(f: A => B): List[B] = ???
+  def foldRight1[A, B](l: List[A], z: B)(f: (A, B) => B): B =
+    foldLeft(reverse(l), z)((b, a) => f(a, b))
+
+  def foldLeft1[A, B](l: List[A], z: B)(f: (B, A) => B): B =
+    foldRight(l, (b: B) => b)((a, g) => b => g(f(b, a)))(z)
+
+  def append1[A](a1: List[A], a2: List[A]): List[A] =
+    foldRight(a1, a2)(Cons(_, _))
+
+  def concat[A](l: List[List[A]]): List[A] =
+    foldRight1(l, Nil: List[A])(append)
+
+  def incr(l: List[Int]): List[Int] = l match {
+    case Nil => l
+    case Cons(h, t) => Cons(h + 1, incr(t))
+  }
+
+  def incr1(l: List[Int]): List[Int] =
+    foldRight1(l, Nil: List[Int])((h, t) => Cons(h + 1, t))
+
+  def doubleToString(l: List[Double]): List[String] =
+    foldRight1(l, Nil: List[String])((h, t) => Cons(h.toString, t))
+
+  def map[A, B](l: List[A])(f: A => B): List[B] =
+    foldRight1(l, Nil: List[B])((h, t) => Cons(f(h), t))
+
+  def filter[A](l: List[A])(f: A => Boolean): List[A] =
+    foldRight1(l, Nil: List[A])((h, t) => if (f(h)) Cons(h, t) else t)
+
 }
