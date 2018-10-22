@@ -165,4 +165,11 @@ class ListTest extends FunSuite {
     assert(zipWith(List(1, 2, 3), List(4, 5, 6))(_ + _) == List(5, 7, 9))
     assert(zipWith(List("1", "2", "3"), List("4", "5", "6"))(_ + _) == List("14", "25", "36"))
   }
+
+  test("testHasSubsequence") {
+    assert(hasSubsequence(Nil, Nil))
+    assert(hasSubsequence(List(1), Nil))
+    assert(hasSubsequence(List(1, 2, 3, 4, 5), List(3, 4)))
+  }
+
 }
