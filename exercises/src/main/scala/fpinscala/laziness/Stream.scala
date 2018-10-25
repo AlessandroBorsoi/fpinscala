@@ -88,11 +88,44 @@ trait Stream[+A] {
     case _ => None
   }
 
-  def zipWith[B, C](s2: Stream[B])(f: (A, B) => C): Stream[C] = ???
+  def zipWith[B, C](s2: Stream[B])(f: (A, B) => C): Stream[C] = unfold((this, s2)) {
+    case (Cons(h1, t1), Cons(h2, t2)) => Some((f(h1(), h2()), (t1(), t2())))
+    case _ => None
+  }
 
-  def zipAll[B](s2: Stream[B]): Stream[(Option[A], Option[B])] = ???
+  def zipAll[B](s2: Stream[B]): Stream[(Option[A], Option[B])] = {
+    def zipWithAll[C, D](s2: Stream[C])(f: (Option[A], Option[C]) => D): Stream[D] = unfold((this, s2)) {
+      case (Empty, Empty) => None
+      case (Cons(h, t), Empty) => Some(f(Some(h()), Option.empty[C]) -> (t(), empty[C]))
+      case (Empty, Cons(h, t)) => Some(f(Option.empty[A], Some(h())) -> (empty[A] -> t()))
+      case (Cons(h1, t1), Cons(h2, t2)) => Some(f(Some(h1()), Some(h2())) -> (t1() -> t2()))
+    }
 
-  def startsWith[B](s: Stream[B]): Boolean = ???
+    zipWithAll(s2)((_, _))
+  }
+
+  def startsWith[B](s: Stream[B]): Boolean =
+    zipAll(s).takeWhile(_._2.isDefined) forAll {
+      case (h, h2) => h == h2
+    }
+
+  def tails: Stream[Stream[A]] = unfold(this) {
+    case Empty => None
+    case s => Some((s, s drop 1))
+  } append Stream(empty)
+
+  def hasSubsequence[B >: A](s: Stream[B]): Boolean =
+    tails exists (_ startsWith s)
+
+  def scanRight[B](z: B)(f: (A, => B) => B): Stream[B] =
+    foldRight((z, Stream(z))) {
+      (a, p0) => {
+        lazy val p1 = p0
+        val b2 = f(a, p1._1)
+        (b2, cons(b2, p1._2))
+      }
+    }._2
+
 }
 
 case object Empty extends Stream[Nothing]
